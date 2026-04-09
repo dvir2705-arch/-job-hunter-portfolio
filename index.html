@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Hunter — AI-Powered Career Management System</title>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --surface: #161b22;
+            --border: #30363d;
+            --text: #e6edf3;
+            --text-dim: #8b949e;
+            --accent: #58a6ff;
+            --accent-green: #3fb950;
+            --accent-purple: #bc8cff;
+            --accent-orange: #d29922;
+            --accent-red: #f85149;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            padding: 80px 0 60px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero .tagline {
+            font-size: 1.25rem;
+            color: var(--text-dim);
+            max-width: 600px;
+            margin: 0 auto 32px;
+        }
+
+        .badges {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border: 1px solid var(--border);
+            background: var(--surface);
+        }
+
+        .badge.python { color: #3572A5; border-color: #3572A5; }
+        .badge.ai { color: var(--accent-orange); border-color: var(--accent-orange); }
+        .badge.tests { color: var(--accent-green); border-color: var(--accent-green); }
+        .badge.lines { color: var(--accent-purple); border-color: var(--accent-purple); }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            padding: 48px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .stat {
+            text-align: center;
+            padding: 20px;
+            background: var(--surface);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .stat .number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .stat .label {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+
+        /* Sections */
+        section {
+            padding: 48px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        section:last-of-type {
+            border-bottom: none;
+        }
+
+        section h2 {
+            font-size: 1.6rem;
+            margin-bottom: 24px;
+            color: var(--text);
+        }
+
+        section h2 .dot {
+            color: var(--accent);
+        }
+
+        /* Problem / Solution */
+        .problem-solution {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+        }
+
+        .card.problem h3 { color: var(--accent-red); }
+        .card.solution h3 { color: var(--accent-green); }
+
+        .card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .card ul li {
+            padding: 6px 0;
+            color: var(--text-dim);
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .card ul li::before {
+            content: "›";
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        /* Features */
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .feature {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .feature .icon {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+
+        .feature h3 {
+            font-size: 1rem;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+
+        .feature p {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+
+        /* Architecture */
+        .architecture-diagram {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px;
+            font-family: 'Courier New', Consolas, monospace;
+            font-size: 0.82rem;
+            line-height: 1.5;
+            overflow-x: auto;
+            white-space: pre;
+            color: var(--text-dim);
+        }
+
+        .architecture-diagram .highlight { color: var(--accent); }
+        .architecture-diagram .green { color: var(--accent-green); }
+        .architecture-diagram .purple { color: var(--accent-purple); }
+        .architecture-diagram .orange { color: var(--accent-orange); }
+
+        /* Tech stack */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .tech-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .tech-item .name {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+
+        .tech-item .role {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        /* CLI demo */
+        .cli-demo {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .cli-header {
+            background: #1c2129;
+            padding: 12px 16px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .cli-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .cli-dot.red { background: #ff5f57; }
+        .cli-dot.yellow { background: #febc2e; }
+        .cli-dot.green { background: #28c840; }
+
+        .cli-header span {
+            margin-left: 8px;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        .cli-body {
+            padding: 20px 24px;
+            font-family: 'Courier New', Consolas, monospace;
+            font-size: 0.85rem;
+            line-height: 1.8;
+        }
+
+        .cli-body .prompt { color: var(--accent-green); }
+        .cli-body .cmd { color: var(--text); }
+        .cli-body .output { color: var(--text-dim); }
+        .cli-body .highlight { color: var(--accent-orange); }
+
+        /* Engineering */
+        .eng-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .eng-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .eng-item h4 {
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+        }
+
+        .eng-item p {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+
+        /* Footer */
+        footer {
+            padding: 40px 0;
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 16px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .stats { grid-template-columns: repeat(2, 1fr); }
+            .problem-solution,
+            .features-grid,
+            .eng-list { grid-template-columns: 1fr; }
+            .tech-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 480px) {
+            .tech-grid { grid-template-columns: 1fr; }
+            .stats { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Hero -->
+    <div class="hero">
+        <h1>Job Hunter</h1>
+        <p class="tagline">An AI-powered career management CLI that adapts your CV to every job description — so each application puts your best foot forward.</p>
+        <div class="badges">
+            <span class="badge python">Python 3.11</span>
+            <span class="badge ai">Claude AI</span>
+            <span class="badge tests">334 Tests</span>
+            <span class="badge lines">7,300+ Lines</span>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats">
+        <div class="stat">
+            <div class="number">30+</div>
+            <div class="label">Python modules</div>
+        </div>
+        <div class="stat">
+            <div class="number">334</div>
+            <div class="label">Automated tests</div>
+        </div>
+        <div class="stat">
+            <div class="number">144</div>
+            <div class="label">Commits</div>
+        </div>
+        <div class="stat">
+            <div class="number">5</div>
+            <div class="label">Job sources</div>
+        </div>
+    </div>
+
+    <!-- Problem / Solution -->
+    <section>
+        <h2><span class="dot">//</span> Why I Built This</h2>
+        <div class="problem-solution">
+            <div class="card problem">
+                <h3>The Problem</h3>
+                <ul>
+                    <li>Sending the same generic CV to every job listing</li>
+                    <li>Manually tailoring each CV takes 30+ minutes</li>
+                    <li>Losing track of applications across companies</li>
+                    <li>Missing follow-up deadlines</li>
+                </ul>
+            </div>
+            <div class="card solution">
+                <h3>The Solution</h3>
+                <ul>
+                    <li>Claude AI adapts your CV per job in seconds</li>
+                    <li>Automated scanning across 5 job sources</li>
+                    <li>Full application lifecycle tracking</li>
+                    <li>One CLI command: scan, filter, adapt, apply</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section>
+        <h2><span class="dot">//</span> Core Features</h2>
+        <div class="features-grid">
+            <div class="feature">
+                <div class="icon">&#x1f916;</div>
+                <h3>AI CV Adaptation</h3>
+                <p>Claude AI analyzes each job description and rewrites your CV to highlight the most relevant skills and experience. Output is a print-ready PDF.</p>
+            </div>
+            <div class="feature">
+                <div class="icon">&#x1f50d;</div>
+                <h3>Multi-Source Job Scanning</h3>
+                <p>Scans LinkedIn, Workday, Amazon Jobs, and company career pages in parallel. AI-powered relevance filtering removes irrelevant matches.</p>
+            </div>
+            <div class="feature">
+                <div class="icon">&#x2709;</div>
+                <h3>Cover Letter Generation</h3>
+                <p>Generates tailored cover letters that adapt focus area by job type — software roles emphasize coding, RF roles highlight signals experience.</p>
+            </div>
+            <div class="feature">
+                <div class="icon">&#x1f4ca;</div>
+                <h3>Application Tracking</h3>
+                <p>Tracks every application with status flow (applied → screening → interview → offer), follow-up reminders, and statistics dashboard.</p>
+            </div>
+            <div class="feature">
+                <div class="icon">&#x1f465;</div>
+                <h3>Multi-Profile System</h3>
+                <p>Supports multiple user profiles with isolated data — designed for multi-user readiness with per-profile CV, applications, and settings.</p>
+            </div>
+            <div class="feature">
+                <div class="icon">&#x1f3af;</div>
+                <h3>Smart Relevance Filter</h3>
+                <p>Two-tier filtering: fast keyword matching, then Claude AI deep-checks uncertain jobs. Adapts keywords from your profile's skills and target roles.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CLI Demo -->
+    <section>
+        <h2><span class="dot">//</span> CLI in Action</h2>
+        <div class="cli-demo">
+            <div class="cli-header">
+                <div class="cli-dot red"></div>
+                <div class="cli-dot yellow"></div>
+                <div class="cli-dot green"></div>
+                <span>Terminal</span>
+            </div>
+            <div class="cli-body">
+<span class="prompt">$</span> <span class="cmd">job-hunter init</span>
+<span class="output">  Name? </span><span class="highlight">Jane Smith</span>
+<span class="output">  Target roles? </span><span class="highlight">backend, ML, data engineering</span>
+<span class="output">  Skills? </span><span class="highlight">Python, SQL, PyTorch, AWS</span>
+<span class="output">  ✓ Profile created. Generating search queries...</span>
+<span class="output">  ✓ 8 search queries generated. Suggesting companies...</span>
+<span class="output">  ✓ Profile ready! Run </span><span class="cmd">job-hunter jobs scan</span><span class="output"> to start.</span>
+
+<span class="prompt">$</span> <span class="cmd">job-hunter jobs scan</span>
+<span class="output">  Scanning 5 sources in parallel...</span>
+<span class="output">  ├─ LinkedIn:    12 jobs found</span>
+<span class="output">  ├─ Workday:     8 jobs found</span>
+<span class="output">  ├─ Company pages: 5 jobs found</span>
+<span class="output">  Filtering with AI... <span class="highlight">18 relevant</span> / 25 total</span>
+
+<span class="prompt">$</span> <span class="cmd">job-hunter cv adapt -j job_desc.txt -t "ML Engineer" -l google --pdf --cover-letter</span>
+<span class="output">  ✓ CV adapted for ML Engineer @ Google</span>
+<span class="output">  ✓ PDF saved:   output/adapted_cv/cv_google.pdf</span>
+<span class="output">  ✓ Cover letter: output/cover_letters/google.pdf</span>
+
+<span class="prompt">$</span> <span class="cmd">job-hunter apps list</span>
+<span class="output">  ┌────────┬──────────────┬──────────────────┬───────────┐</span>
+<span class="output">  │ ID     │ Company      │ Position         │ Status    │</span>
+<span class="output">  ├────────┼──────────────┼──────────────────┼───────────┤</span>
+<span class="output">  │ a3f2.. │ Google       │ ML Engineer      │ applied   │</span>
+<span class="output">  │ b7e1.. │ Microsoft    │ Backend Dev      │ interview │</span>
+<span class="output">  │ c9d4.. │ NVIDIA       │ Data Engineer    │ screening │</span>
+<span class="output">  └────────┴──────────────┴──────────────────┴───────────┘</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture -->
+    <section>
+        <h2><span class="dot">//</span> Architecture</h2>
+        <div class="architecture-diagram">
+<span class="highlight">                          ┌─────────────────────┐</span>
+<span class="highlight">                          │    CLI (Click+Rich)  │</span>
+<span class="highlight">                          └──────────┬──────────┘</span>
+                                     │
+              ┌──────────────────────┼──────────────────────┐
+              │                      │                      │
+<span class="green">    ┌─────────▼────────┐</span>  <span class="purple">┌──────────▼─────────┐</span>  <span class="orange">┌──────▼────────────┐</span>
+<span class="green">    │   CV Module       │</span>  <span class="purple">│   Jobs Module      │</span>  <span class="orange">│  Applications     │</span>
+<span class="green">    │                  │</span>  <span class="purple">│                    │</span>  <span class="orange">│                   │</span>
+<span class="green">    │  adapter.py      │</span>  <span class="purple">│  scraper.py        │</span>  <span class="orange">│  tracker.py       │</span>
+<span class="green">    │  renderer.py     │</span>  <span class="purple">│  relevance_filter  │</span>  <span class="orange">│  models.py        │</span>
+<span class="green">    │  docx_parser.py  │</span>  <span class="purple">│  search_strategy   │</span>  <span class="orange">│  status flow      │</span>
+<span class="green">    │  manager.py      │</span>  <span class="purple">│  scan_cache.py     │</span>  <span class="orange">│  follow-ups       │</span>
+<span class="green">    └────────┬─────────┘</span>  <span class="purple">└──────────┬─────────┘</span>  <span class="orange">└───────────────────┘</span>
+             │                       │
+    ┌────────▼─────────┐    ┌────────▼─────────┐
+    │  <span class="highlight">Claude AI API</span>   │    │  <span class="highlight">Claude AI API</span>   │
+    │  CV rewriting    │    │  Relevance check │
+    │  Cover letters   │    │  Query generation│
+    └──────────────────┘    └──────────────────┘
+
+<span class="green">    ┌──────────────────┐</span>    <span class="purple">┌──────────────────┐</span>
+<span class="green">    │ Profile Manager  │</span>    <span class="purple">│ Recruiter Module │</span>
+<span class="green">    │ Multi-user data  │</span>    <span class="purple">│ Contact finder   │</span>
+<span class="green">    │ Legacy migration │</span>    <span class="purple">│ Email discovery  │</span>
+<span class="green">    └──────────────────┘</span>    <span class="purple">└──────────────────┘</span></div>
+    </section>
+
+    <!-- Tech Stack -->
+    <section>
+        <h2><span class="dot">//</span> Tech Stack</h2>
+        <div class="tech-grid">
+            <div class="tech-item">
+                <div class="name">Python 3.11</div>
+                <div class="role">Core language, type hints throughout</div>
+            </div>
+            <div class="tech-item">
+                <div class="name">Claude AI API</div>
+                <div class="role">CV adaptation, cover letters, relevance filtering</div>
+            </div>
+            <div class="tech-item">
+                <div class="name">Click + Rich</div>
+                <div class="role">CLI framework with styled terminal output</div>
+            </div>
+            <div class="tech-item">
+                <div class="name">Jinja2 + Chrome</div>
+                <div class="role">HTML/CSS templates → print-ready PDF</div>
+            </div>
+            <div class="tech-item">
+                <div class="name">JobSpy + BeautifulSoup</div>
+                <div class="role">Multi-source job scraping</div>
+            </div>
+            <div class="tech-item">
+                <div class="name">Pytest</div>
+                <div class="role">334 tests — unit, integration, CLI-level</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Engineering Highlights -->
+    <section>
+        <h2><span class="dot">//</span> Engineering Highlights</h2>
+        <div class="eng-list">
+            <div class="eng-item">
+                <h4>Parallel Job Scanning</h4>
+                <p>ThreadPoolExecutor scans 5 sources concurrently with per-source caching (90-min TTL) and progressive CLI output.</p>
+            </div>
+            <div class="eng-item">
+                <h4>Two-Tier AI Filtering</h4>
+                <p>Fast keyword pre-filter eliminates obvious mismatches, then Claude AI deep-checks borderline jobs — balancing speed with accuracy.</p>
+            </div>
+            <div class="eng-item">
+                <h4>Profile-Driven Design</h4>
+                <p>All features derive behavior from the user profile — search queries, filter keywords, CV rules, and cover letter style adapt automatically.</p>
+            </div>
+            <div class="eng-item">
+                <h4>Multi-Profile Isolation</h4>
+                <p>Each profile gets its own data directory. Legacy single-user setups auto-migrate on first run. Built for multi-user readiness.</p>
+            </div>
+            <div class="eng-item">
+                <h4>Robust Error Handling</h4>
+                <p>JSON parse guards, graceful API failure fallbacks, cross-platform Chrome detection (Windows/macOS/Linux), malformed data recovery.</p>
+            </div>
+            <div class="eng-item">
+                <h4>Test Coverage</h4>
+                <p>334 tests across three layers: unit tests for models, integration tests for modules, and CLI-level tests using Click's CliRunner.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-links">
+            <a href="https://linkedin.com/in/dvir-solomon-6b87493a2">LinkedIn</a>
+            <a href="https://github.com/dvir2705-arch">GitHub</a>
+            <a href="mailto:Dvir2705@gmail.com">Contact</a>
+        </div>
+        <p>Built by <strong>Dvir Salomon</strong> — Electrical Engineering Student, Ben-Gurion University</p>
+        <p style="margin-top: 8px; font-size: 0.8rem; color: #484f58;">Source code available on request for technical review</p>
+    </footer>
+
+</div>
+
+</body>
+</html>
