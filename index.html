@@ -337,6 +337,69 @@
             margin-bottom: 16px;
         }
 
+        /* Animated Terminal */
+        .terminal-animated {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            max-width: 100%;
+        }
+
+        .terminal-animated .cli-body {
+            min-height: 420px;
+            position: relative;
+        }
+
+        .term-line {
+            opacity: 0;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .term-line.visible {
+            opacity: 1;
+        }
+
+        .term-line .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 1.1em;
+            background: var(--accent-green);
+            vertical-align: text-bottom;
+            animation: blink 0.7s step-end infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        .term-typing {
+            color: var(--text);
+        }
+
+        .replay-btn {
+            display: none;
+            margin: 16px auto;
+            padding: 8px 20px;
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-family: inherit;
+            transition: background 0.2s;
+        }
+
+        .replay-btn:hover {
+            background: rgba(88, 166, 255, 0.1);
+        }
+
+        .replay-btn.show {
+            display: block;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .hero h1 { font-size: 2rem; }
@@ -360,7 +423,7 @@
     <!-- Hero -->
     <div class="hero">
         <h1>Job Hunter</h1>
-        <p class="tagline">An AI-powered career management CLI that adapts your CV to every job description — so each application puts your best foot forward.</p>
+        <p class="tagline">An AI-powered CLI that scans multiple job sources in parallel, filters results with AI relevance matching, and generates tailored CVs and cover letters — automating the job search from discovery to application.</p>
         <div class="badges">
             <span class="badge python">Python 3.11</span>
             <span class="badge ai">Claude AI</span>
@@ -451,47 +514,19 @@
         </div>
     </section>
 
-    <!-- CLI Demo -->
+    <!-- CLI Demo (Animated) -->
     <section>
         <h2><span class="dot">//</span> CLI in Action</h2>
-        <div class="cli-demo">
+        <div class="terminal-animated">
             <div class="cli-header">
                 <div class="cli-dot red"></div>
                 <div class="cli-dot yellow"></div>
                 <div class="cli-dot green"></div>
-                <span>Terminal</span>
+                <span>Terminal — job-hunter demo</span>
             </div>
-            <div class="cli-body">
-<span class="prompt">$</span> <span class="cmd">job-hunter init</span>
-<span class="output">  Name? </span><span class="highlight">Jane Smith</span>
-<span class="output">  Target roles? </span><span class="highlight">backend, ML, data engineering</span>
-<span class="output">  Skills? </span><span class="highlight">Python, SQL, PyTorch, AWS</span>
-<span class="output">  ✓ Profile created. Generating search queries...</span>
-<span class="output">  ✓ 8 search queries generated. Suggesting companies...</span>
-<span class="output">  ✓ Profile ready! Run </span><span class="cmd">job-hunter jobs scan</span><span class="output"> to start.</span>
-
-<span class="prompt">$</span> <span class="cmd">job-hunter jobs scan</span>
-<span class="output">  Scanning 5 sources in parallel...</span>
-<span class="output">  ├─ LinkedIn:    12 jobs found</span>
-<span class="output">  ├─ Workday:     8 jobs found</span>
-<span class="output">  ├─ Company pages: 5 jobs found</span>
-<span class="output">  Filtering with AI... <span class="highlight">18 relevant</span> / 25 total</span>
-
-<span class="prompt">$</span> <span class="cmd">job-hunter cv adapt -j job_desc.txt -t "ML Engineer" -l google --pdf --cover-letter</span>
-<span class="output">  ✓ CV adapted for ML Engineer @ Google</span>
-<span class="output">  ✓ PDF saved:   output/adapted_cv/cv_google.pdf</span>
-<span class="output">  ✓ Cover letter: output/cover_letters/google.pdf</span>
-
-<span class="prompt">$</span> <span class="cmd">job-hunter apps list</span>
-<span class="output">  ┌────────┬──────────────┬──────────────────┬───────────┐</span>
-<span class="output">  │ ID     │ Company      │ Position         │ Status    │</span>
-<span class="output">  ├────────┼──────────────┼──────────────────┼───────────┤</span>
-<span class="output">  │ a3f2.. │ Google       │ ML Engineer      │ applied   │</span>
-<span class="output">  │ b7e1.. │ Microsoft    │ Backend Dev      │ interview │</span>
-<span class="output">  │ c9d4.. │ NVIDIA       │ Data Engineer    │ screening │</span>
-<span class="output">  └────────┴──────────────┴──────────────────┴───────────┘</span>
-            </div>
+            <div class="cli-body" id="terminal"></div>
         </div>
+        <button class="replay-btn" id="replayBtn" onclick="startDemo()">Replay Demo</button>
     </section>
 
     <!-- Architecture -->
@@ -601,5 +636,184 @@
 
 </div>
 
+<script>
+const DEMO_SCRIPT = [
+    { type: 'cmd', text: 'job-hunter init' },
+    { type: 'pause', ms: 400 },
+    { type: 'out', text: '  Name? ', follow: 'Jane Smith', followColor: '#d29922' },
+    { type: 'out', text: '  Target roles? ', follow: 'backend, ML, data engineering', followColor: '#d29922' },
+    { type: 'out', text: '  Skills? ', follow: 'Python, SQL, PyTorch, AWS', followColor: '#d29922' },
+    { type: 'pause', ms: 300 },
+    { type: 'out', text: '  \u2713 Profile created. Generating search queries...', color: '#3fb950' },
+    { type: 'out', text: '  \u2713 8 search queries generated. Suggesting companies...', color: '#3fb950' },
+    { type: 'out', text: '  \u2713 Profile ready! Run job-hunter jobs scan to start.', color: '#3fb950' },
+    { type: 'pause', ms: 800 },
+    { type: 'blank' },
+    { type: 'cmd', text: 'job-hunter jobs scan' },
+    { type: 'pause', ms: 400 },
+    { type: 'out', text: '  Scanning 5 sources in parallel...' },
+    { type: 'pause', ms: 600 },
+    { type: 'out', text: '  \u251c\u2500 LinkedIn:       12 jobs found' },
+    { type: 'pause', ms: 300 },
+    { type: 'out', text: '  \u251c\u2500 Workday:        8 jobs found' },
+    { type: 'pause', ms: 300 },
+    { type: 'out', text: '  \u251c\u2500 Company pages:  5 jobs found' },
+    { type: 'pause', ms: 500 },
+    { type: 'out', text: '  Filtering with AI... 18 relevant / 25 total', highlight: '18 relevant' },
+    { type: 'pause', ms: 800 },
+    { type: 'blank' },
+    { type: 'cmd', text: 'job-hunter cv adapt -j job_desc.txt -t "ML Engineer" -l google --pdf --cover-letter' },
+    { type: 'pause', ms: 500 },
+    { type: 'out', text: '  \u2713 CV adapted for ML Engineer @ Google', color: '#3fb950' },
+    { type: 'out', text: '  \u2713 PDF saved:   output/adapted_cv/cv_google.pdf', color: '#3fb950' },
+    { type: 'out', text: '  \u2713 Cover letter: output/cover_letters/google.pdf', color: '#3fb950' },
+    { type: 'pause', ms: 800 },
+    { type: 'blank' },
+    { type: 'cmd', text: 'job-hunter apps list' },
+    { type: 'pause', ms: 400 },
+    { type: 'table', lines: [
+        '  \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510',
+        '  \u2502 ID     \u2502 Company      \u2502 Position         \u2502 Status    \u2502',
+        '  \u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524',
+        '  \u2502 a3f2.. \u2502 Google       \u2502 ML Engineer      \u2502 applied   \u2502',
+        '  \u2502 b7e1.. \u2502 Microsoft    \u2502 Backend Dev      \u2502 interview \u2502',
+        '  \u2502 c9d4.. \u2502 NVIDIA       \u2502 Data Engineer    \u2502 screening \u2502',
+        '  \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518'
+    ]},
+    { type: 'end' }
+];
+
+const terminal = document.getElementById('terminal');
+const replayBtn = document.getElementById('replayBtn');
+let animationId = 0;
+
+function createLine() {
+    const div = document.createElement('div');
+    div.className = 'term-line';
+    terminal.appendChild(div);
+    terminal.scrollTop = terminal.scrollHeight;
+    return div;
+}
+
+function sleep(ms) {
+    return new Promise(r => setTimeout(r, ms));
+}
+
+async function typeText(el, text, speed) {
+    for (let i = 0; i < text.length; i++) {
+        el.textContent += text[i];
+        await sleep(speed);
+    }
+}
+
+async function startDemo() {
+    const myId = ++animationId;
+    terminal.innerHTML = '';
+    replayBtn.classList.remove('show');
+
+    for (const step of DEMO_SCRIPT) {
+        if (animationId !== myId) return;
+
+        if (step.type === 'cmd') {
+            const line = createLine();
+            line.classList.add('visible');
+            const prompt = document.createElement('span');
+            prompt.style.color = '#3fb950';
+            prompt.textContent = '$ ';
+            line.appendChild(prompt);
+            const cmdSpan = document.createElement('span');
+            cmdSpan.className = 'term-typing';
+            line.appendChild(cmdSpan);
+            // Typing cursor
+            const cursor = document.createElement('span');
+            cursor.className = 'cursor';
+            line.appendChild(cursor);
+            // Type the command
+            for (let i = 0; i < step.text.length; i++) {
+                if (animationId !== myId) return;
+                cmdSpan.textContent += step.text[i];
+                await sleep(45);
+            }
+            // Remove cursor after typing
+            await sleep(200);
+            cursor.remove();
+            await sleep(300);
+        }
+
+        else if (step.type === 'out') {
+            const line = createLine();
+            if (step.highlight) {
+                const idx = step.text.indexOf(step.highlight);
+                const before = step.text.substring(0, idx);
+                const after = step.text.substring(idx + step.highlight.length);
+                line.innerHTML = '';
+                const s1 = document.createElement('span');
+                s1.style.color = '#8b949e';
+                s1.textContent = before;
+                const hl = document.createElement('span');
+                hl.style.color = '#d29922';
+                hl.style.fontWeight = 'bold';
+                hl.textContent = step.highlight;
+                const s2 = document.createElement('span');
+                s2.style.color = '#8b949e';
+                s2.textContent = after;
+                line.append(s1, hl, s2);
+            } else if (step.follow) {
+                const s1 = document.createElement('span');
+                s1.style.color = '#8b949e';
+                s1.textContent = step.text;
+                const s2 = document.createElement('span');
+                s2.style.color = step.followColor || '#d29922';
+                s2.textContent = step.follow;
+                line.append(s1, s2);
+            } else {
+                line.style.color = step.color || '#8b949e';
+                line.textContent = step.text;
+            }
+            line.classList.add('visible');
+            await sleep(120);
+        }
+
+        else if (step.type === 'table') {
+            for (const row of step.lines) {
+                if (animationId !== myId) return;
+                const line = createLine();
+                line.style.color = '#8b949e';
+                line.textContent = row;
+                line.classList.add('visible');
+                await sleep(80);
+            }
+        }
+
+        else if (step.type === 'blank') {
+            const line = createLine();
+            line.innerHTML = '&nbsp;';
+            line.classList.add('visible');
+        }
+
+        else if (step.type === 'pause') {
+            await sleep(step.ms);
+        }
+
+        else if (step.type === 'end') {
+            await sleep(500);
+            replayBtn.classList.add('show');
+        }
+    }
+
+    // Auto-scroll terminal during animation
+    terminal.scrollTop = terminal.scrollHeight;
+}
+
+// Start when section is visible
+const observer = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) {
+        startDemo();
+        observer.disconnect();
+    }
+}, { threshold: 0.3 });
+
+observer.observe(document.querySelector('.terminal-animated'));
+</script>
 </body>
 </html>
